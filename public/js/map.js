@@ -80,8 +80,6 @@ var map = L.map("map", {
 
 L.control.scale().addTo(map);
 
-// document.querySelector(".leaflet-control-scale").style.visibility = "hidden";
-
 var parcel = L.tileLayer.wms(
   "http://map.davaocity.gov.ph:8080/geoserver/wms?",
   {
@@ -92,7 +90,6 @@ var parcel = L.tileLayer.wms(
     opacity: 1,
     maxZoom: 20,
     maxNativeZoom: 20,
-    // crs: L.CRS.EPSG4326,
     Identify: false,
     preserveDrawingBuffer: true,
   }
@@ -123,7 +120,6 @@ window.onload = async () => {
       var boundingBox = calculateBoundingBox(data);
       map.fitBounds(boundingBox);
       loader_off();
-      // updateScaleInfo();
   })
   .catch(error => console.error('Error:', error));
 
@@ -176,7 +172,6 @@ async function setWFS(dist, brgy, sect) {
         opacity: 1,
         maxZoom: 20,
         maxNativeZoom: 20,
-        // crs: L.CRS.EPSG4326,
         Identify: false,
         preserveDrawingBuffer: true,
       }
@@ -194,7 +189,6 @@ async function setWFS(dist, brgy, sect) {
         opacity: 1,
         maxZoom: 20,
         maxNativeZoom: 20,
-        // crs: L.CRS.EPSG4326,
         Identify: false,
         CQL_FILTER: cqlFilter,
         preserveDrawingBuffer: true,
@@ -210,7 +204,6 @@ async function setWFS(dist, brgy, sect) {
         var boundingBox = calculateBoundingBox(data);
         map.fitBounds(boundingBox);
         loader_off();
-        // updateScaleInfo();
     })
     .catch(error => {
       alert("Location not yet updated");
@@ -311,7 +304,7 @@ async function getPerims(callback) {
   await setImage(app_sig, perimeter_approver_signature.id);
 
   setTimeout(() => {
-    callback(); // Call the callback function to signal completion
+    callback();
   }, 1000);
 }
 
@@ -373,7 +366,6 @@ async function uploadImage(image, image_type) {
       } else {
         deleteImage(data);
         updateImage(image, image_type);
-        // console.log(data.path_find);
       }
     })
     .catch((error) => console.error("Error fetching data", error));
@@ -667,10 +659,6 @@ delete_app.addEventListener("click", async () => {
 report.addEventListener("change", async () => {
   setTemplateTitle();
   clearFields();
-  // td_provcity
-  // td_mundist 
-  // td_barangay
-  // td_section 
   if(report.value == "PROPERTY IDENTIFICATION MAP"){
     td_section.style.display = "block";
     td_barangay.style.display = "block";
@@ -721,30 +709,3 @@ report.addEventListener("change", async () => {
     section_container.style.display = "none";
   }
 });
-
-// map.on('zoomend', updateScaleInfo);
-// map.on('resize', updateScaleInfo);
-
-// function updateScaleInfo() {
-//   const scaleLabel = document.querySelector('.leaflet-control-scale-line').textContent;
-  
-//   if(scaleLabel.includes("km")){
-//     var scalevalue = scaleLabel.substring(0, scaleLabel.length - 2);
-//     var scaleinteger = parseInt(scalevalue);
-//     var scalemetervalue = scaleinteger * 1000;
-//     var scalepercent = scalemetervalue/25000*100;
-//     scale.innerHTML = "Scale: <u>1:" + scalemetervalue + " m</u>";
-
-//     if(scalemetervalue >= 25000) {
-//       scalebarcolor.style.width = "100%";
-//     } else {
-//       scalebarcolor.style.width = scalepercent + "%";
-//     }
-//   } else {
-//     var scalevalue = scaleLabel.substring(0, scaleLabel.length - 2);
-//     var scaleinteger = parseInt(scalevalue);
-//     var scalepercent = scaleinteger/25000*100;
-//     scale.innerHTML = "Scale: <u>1:" + scalevalue + " m</u>";
-//     scalebarcolor.style.width = scalepercent + "%";
-//   }
-// }

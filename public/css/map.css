@@ -15,6 +15,7 @@ body {
   border-style: solid;
   border-width: 2px;
   width: 1545px;
+  height: 1080px;
 }
 
 #variables_container {
@@ -31,7 +32,7 @@ body {
 }
 
 #variables_container div {
-  flex: 0 0 calc(33.33% - 20px); /* Adjust the width of each box and the number of items per row */
+  flex: 0 0 calc(33.33% - 20px);
   padding: 20px;
   border: 1px solid #ccc;
   box-sizing: border-box;
@@ -62,7 +63,7 @@ body {
   content: "";
   top: 0;
   left: 0;
-  width: 0%; /* Adjust the width to represent the scale */
+  width: 0%;
   height: 100%;
   background-color: black;
 }
@@ -135,7 +136,6 @@ h1 {
 
 #prep-container, #ver-container, #app-container {
   display: flex;
-  /* justify-content: space-between; */
   flex-direction: column;
   margin: 5px;
 }
@@ -198,7 +198,7 @@ input {
   right: 20px;
   left: auto;
   background-color: #ffffff;
-  position: absolute;
+  position: fixed;
   border-radius: 10px;
   border: 1px solid #000000;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
