@@ -97,7 +97,7 @@ var parcel = L.tileLayer.wms(
 
 window.onload = async () => {
   loader_on();
-  await fetch("/getDistrict")
+  await fetch("http://localhost:5000/getDistrict")
   .then((response) => response.json())
   .then((data) => {
     var option = document.createElement("option");
@@ -137,7 +137,7 @@ async function setBarangayList() {
   if(district.value == ""){
     console.log("Choose a District");
   } else {
-    fetch("/getBarangay/" + district.value)
+    fetch("http://localhost:5000/getBarangay/" + district.value)
     .then((response) => response.json())
     .then((data) => {
       for(var y = 0;y < data.length;y++){
@@ -275,7 +275,7 @@ async function captureLeaflet() {
 }
 
 async function getPerims(callback) {
-  await fetch("/getPerimeters")
+  await fetch("http://localhost:5000/getPerimeters")
   .then((response) => response.json())
   .then((data) => {
     perimeter_id.value = data[0].id;
@@ -309,30 +309,30 @@ async function getPerims(callback) {
 }
 
 async function setPerimeterImage(image, image_type) {
-  await fetch("/checkImage?image_type=" + image_type)
+  await fetch("http://localhost:5000/checkImage?image_type=" + image_type)
   .then((response) => response.json())
   .then((data) => {
     if (data.error) {
       image.src = "./image/default.jpg";
     } else {
-      fetch("/getImage?image_type=" + image_type);
-      image.src = "/getImage?image_type=" + image_type;
+      fetch("http://localhost:5000/getImage?image_type=" + image_type);
+      image.src = "http://localhost:5000/getImage?image_type=" + image_type;
     }
   })
   .catch((error) => console.error("Error fetching data", error));
 }
 
 async function setImage(image, image_type){
-  await fetch("/checkImage?image_type=" + image_type)
+  await fetch("http://localhost:5000/checkImage?image_type=" + image_type)
   .then((response) => response.json())
   .then((data) => {
     if (data.error) {
       image.style.visibility = "hidden";
       image.style.height = "0px"
     } else {
-      fetch("/getImage?image_type=" + image_type);
+      fetch("http://localhost:5000/getImage?image_type=" + image_type);
       image.style.visibility = "visible";
-      image.src = "/getImage?image_type=" + image_type;
+      image.src = "http://localhost:5000/getImage?image_type=" + image_type;
     }
   })
   .catch((error) => console.error("Error fetching data", error));
@@ -358,7 +358,7 @@ async function changeImage(event, image) {
 
 async function uploadImage(image, image_type) {
   if (image.files[0]) {
-    await fetch("/checkImage?image_type=" + image_type)
+    await fetch("http://localhost:5000/checkImage?image_type=" + image_type)
     .then((response) => response.json())
     .then((data) => {
       if (data.error) {
@@ -375,7 +375,7 @@ async function uploadImage(image, image_type) {
 }
 
 async function deleteImage(data) {
-  await fetch("/delete?path_find=" + data.path_find)
+  await fetch("http://localhost:5000/delete?path_find=" + data.path_find)
     .then((response) => {
       if (response.ok) {
         console.log("Image updated successfully!");
@@ -401,7 +401,7 @@ async function insertImage(image, image_type) {
     formData.append("image", file);
     formData.append("image_type", image_type);
 
-    fetch("/upload", {
+    fetch("http://localhost:5000/upload", {
       method: "POST",
       body: formData,
     })
@@ -424,7 +424,7 @@ async function updateImage(image, image_type) {
     formData.append("image", file);
     formData.append("image_type", image_type);
 
-    fetch("/update", {
+    fetch("http://localhost:5000/update", {
       method: "PUT",
       body: formData,
     })
@@ -439,7 +439,7 @@ async function updateImage(image, image_type) {
 }
 
 async function deleteSignature(image_type) {
-  await fetch("/deleteImage?image_type=" + image_type)
+  await fetch("http://localhost:5000/deleteImage?image_type=" + image_type)
   .then((response) => response.json())
   .then((data) => {
     if (data.error) {
@@ -512,7 +512,7 @@ save_button.addEventListener("click", async () => {
   const approved_position = perimeter_approved_position.value;
   const id = perimeter_id.value;
 
-  await fetch("/updatePerimeters", {
+  await fetch("http://localhost:5000/updatePerimeters", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -603,7 +603,7 @@ menu.addEventListener("click", async () => {
 });
 
 delete_prep.addEventListener("click", async () => {
-  await fetch("/checkImage?image_type=" + perimeter_preparer_signature.id)
+  await fetch("http://localhost:5000/checkImage?image_type=" + perimeter_preparer_signature.id)
   .then((response) => response.json())
   .then((data) => {
     if (data.error) {
@@ -621,7 +621,7 @@ delete_prep.addEventListener("click", async () => {
 });
 
 delete_ver.addEventListener("click", async () => {
-  await fetch("/checkImage?image_type=" + perimeter_verifier_signature.id)
+  await fetch("http://localhost:5000/checkImage?image_type=" + perimeter_verifier_signature.id)
   .then((response) => response.json())
   .then((data) => {
     if (data.error) {
@@ -639,7 +639,7 @@ delete_ver.addEventListener("click", async () => {
 });
 
 delete_app.addEventListener("click", async () => {
-  await fetch("/checkImage?image_type=" + perimeter_approver_signature.id)
+  await fetch("http://localhost:5000/checkImage?image_type=" + perimeter_approver_signature.id)
   .then((response) => response.json())
   .then((data) => {
     if (data.error) {
