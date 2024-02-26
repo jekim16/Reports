@@ -1,0 +1,179 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="./css/fontawesome/css/fontawesome.css" rel="stylesheet" />
+    <link href="./css/fontawesome/css/brands.css" rel="stylesheet" />
+    <link href="./css/fontawesome/css/solid.css" rel="stylesheet" />
+    <link rel="stylesheet" href="./css/map.css" />
+    <link rel="stylesheet" href="./dist/leaflet/leaflet.css" />
+    <script src="./dist/html2canvas.min.js"></script>
+    <script src="./dist/html2pdf.bundle.min.js"></script>
+  </head>
+  <header>
+    <div id="header">
+      <img src="./image/LND_Logo.png" alt="" class="page_logo">
+      <div>
+        <select name="report" id="report">
+          <option value="PROPERTY IDENTIFICATION MAP">PROPERTY IDENTIFICATION MAP</option>
+          <option value="SECTION INDEX MAP">SECTION INDEX MAP</option>
+          <option value="BARANGAY INDEX MAP">BARANGAY INDEX MAP</option>
+          <option value="DISTRICT INDEX MAP">DISTRICT INDEX MAP</option>
+        </select>
+      </div>
+      <i class="fa-solid fa-bars fa-xl menu" id="menu"></i>
+    </div>
+  </header>
+  <body>
+    <div id="perimeter_container">
+      <div id="perimeter">
+        <input type="text" name="perimeter_id" id="perimeter_id" hidden>
+        <div id="perimeter_input_container">
+          <label for="perimeter_prepared">Prepared: </label>
+          <div id="perimeter_input">
+            <input type="text" name="perimeter_prepared" id="perimeter_prepared" placeholder="Name...">
+            <input type="text" id="perimeter_prepared_position" placeholder="Position...">
+          </div>
+        </div>
+        <div id="perimeter_input_container">
+          <label for="perimeter_verified">Verified: </label>
+          <div id="perimeter_input">
+            <input type="text" name="perimeter_verified" id="perimeter_verified" placeholder="Name...">
+            <input type="text" id="perimeter_verified_position" placeholder="Position...">
+          </div>
+        </div>
+        <div id="perimeter_input_container">
+          <label for="perimeter_approved">Approved: </label>
+          <div id="perimeter_input">
+            <input type="text" name="perimeter_approved" id="perimeter_approved" placeholder="Name...">
+            <input type="text" id="perimeter_approved_position" placeholder="Position...">
+          </div>
+        </div>
+        <div id="perimeter_input_container">
+          <label for="perimeter_logo">Logo: </label>
+          <div id="perimeter_input">
+            <input type="file" name="perimeter_logo" id="perimeter_logo" accept="image/*" class="flex_end">
+          </div>
+        </div>
+        <img src="" alt="Logo" id="logo_image" class="image">
+        <hr class="line">
+        <div id="perimeter_input_container">
+          <label for="perimeter_preparer_signature">Preparer Signature: </label>
+          <div id="perimeter_input">
+            <input type="file" name="perimeter_preparer_signature" id="perimeter_preparer_signature" accept="image/*" class="flex_end">
+          </div>
+        </div>
+        <img src="" alt="Signature" id="preparer_signature" class="image">
+        <button id="delete_prep" class="delete">Delete</button>
+        <hr class="line">
+        <div id="perimeter_input_container">
+          <label for="perimeter_verifier_signature">Verifier Signature: </label>
+          <div id="perimeter_input">
+            <input type="file" name="perimeter_verifier_signature" id="perimeter_verifier_signature" accept="image/*" class="flex_end">
+          </div>
+        </div>
+        <img src="" alt="Signature" id="verifier_signature" class="image">
+        <button id="delete_ver" class="delete">Delete</button>
+        <hr class="line">
+        <div id="perimeter_input_container">
+          <label for="perimeter_approver_signature">Approver Signature: </label>
+          <div id="perimeter_input">
+            <input type="file" name="perimeter_approver_signature" id="perimeter_approver_signature" accept="image/*" class="flex_end">
+          </div>
+        </div>
+        <img src="" alt="Signature" id="approver_signature" class="image">
+        <button id="delete_app" class="delete">Delete</button>
+        <button id="save_button">Save</button>
+      </div>
+    </div>
+    <div id="loader" class="center"></div>
+    <div id="variables_container">
+      <div id="district_container">
+        <label for="district">District: </label>
+        <select name="district" id="district"></select>
+      </div>
+      <div id="barangay_container">
+        <label for="barangay">Barangay: </label>
+        <select name="barangay" id="barangay"></select>
+      </div>
+      <div id="section_container">
+        <label for="section">Section: </label>
+        <input type="text" name="section" id="section">
+      </div>
+    </div>
+    <div id="button_container">
+      <button id="submit">Load Map</button>
+      <button id="createPDF">Generate PDF</button>
+    </div>
+    <br>
+    <div id="map_container">
+      <div id="map"></div>
+      <div id="properties">
+        <img src="" alt="Logo" id="logo" class="logo">
+        <div id="template_title">
+        </div>
+        <br>
+        <div id="prep-container">
+          <label>PREPARED BY:</label>
+          <img src="" alt="signature" id="prep_sig" class="signature">
+          <div id="prep-input">
+            <div id="prepared" name="prepared" class="name"></div>
+            <div id="prep_pos" class="position"></div>
+          </div>
+        </div>
+
+        <div id="ver-container">
+          <label>VERIFIED BY:</label>
+          <img src="" alt="signature" id="ver_sig" class="signature">
+          <div id="ver-input">
+            <div id="verified" name="verified" class="name"></div>
+            <div id="ver_pos" class="position"></div>
+          </div>
+        </div>
+
+        <div id="content">
+          <p>This map is prepared for taxation purposes only and shall not be considered as evidence for setting bdry. disputes.</p>
+        </div>
+
+        <div id="app-container">
+          <label>APPROVED BY:</label>
+          <img src="" alt="signature" id="app_sig" class="signature">
+          <div id="app-input">
+            <div id="approved" name="approved" class="name"></div>
+            <div id="app_pos" class="position"></div>
+          </div>
+        </div>
+
+        <div id="location_table">
+          <div id="first_row">
+            <div id="td_provcity">
+              Prov./City:
+              <div id="table_prov_city"></div>
+            </div>
+            <div id="td_mundist">
+              Mun./Dist.
+              <div id="table_mun_dist"></div>
+            </div>
+          </div>
+          <div id="second_row">
+            <div id="td_barangay">
+              Barangay
+              <div id="table_barangay"></div>
+            </div>
+            <div id="td_section">
+              Section
+              <div id="table_section"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pdfFrame" id="pdfFrameContainer">
+      <i class="fa-solid fa-xmark fa-xl" id="closePopupBtn"></i>
+      <iframe id="pdfFrame" src=""></iframe>
+    </div>
+    <script src="./dist/leaflet/leaflet.js"></script>
+    <script src="./dist/leaflet/leaflet-wfst.min.js"></script>
+    <script src="./js/map.js"></script>
+  </body>
+</html>
