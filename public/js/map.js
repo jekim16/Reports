@@ -313,7 +313,7 @@ async function setPerimeterImage(image, image_type) {
   .then((response) => response.json())
   .then((data) => {
     if (data.error) {
-      image.src = "./image/default.jpg";
+      image.src = "../image/default.jpg";
     } else {
       fetch("http://138.2.84.62:5000/getImage?image_type=" + image_type);
       image.src = "http://138.2.84.62:5000/getImage?image_type=" + image_type;
