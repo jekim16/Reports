@@ -72,6 +72,11 @@ const login = document.getElementById("login");
 const username = document.getElementById("username");
 const password = document.getElementById("password");
 
+const blackscreen = document.getElementById("blackscreen");
+const login_container = document.getElementById("login_container");
+const logout = document.getElementById("logout");
+const token = localStorage.getItem("authToken");
+
 var wfsURL = "http://map.davaocity.gov.ph:8080/geoserver/wfs";
 var typeName = "Davao:rptas_parcelblack";
 var wfsRequestUrl = wfsURL + '?service=WFS&version=2.0.0&request=GetFeature&typeName=' + typeName + '&outputFormat=application/json&SrsName=EPSG:4326';
@@ -100,6 +105,14 @@ var parcel = L.tileLayer.wms(
 ).addTo(map);
 
 window.onload = async () => {
+  if(token == null || token == "") {
+    blackscreen.style.visibility = "visible";
+    login_container.style.visibility = "visible";
+  } else {
+    blackscreen.style.visibility = "hidden";
+    login_container.style.visibility = "hidden";
+  }
+
   loader_on();
   await fetch("http://138.2.84.62:5000/getDistrict")
   .then((response) => response.json())
@@ -476,6 +489,11 @@ async function loader_off() {
   submitbtn.disabled = false;
 }
 
+async function onLogin() {
+  blackscreen.style.visibility = "hidden";
+  login_container.style.visibility = "hidden";
+}
+
 perimeter_logo.addEventListener("change", async (event) => {
   changeImage(event, logo_image);
 });
@@ -715,12 +733,14 @@ report.addEventListener("change", async () => {
 });
 
 login.addEventListener("click", async () => {
+  loader_on();
   const username_value = username.value;
   const password_value = password.value;
 
-  const formData = new FormData();
-  formData.append("email", username_value);
-  formData.append("password", password_value);
+  const formData = {
+    email: username_value,
+    password: password_value
+  }
 
   fetch('https://gisuat.nexitydev.com/userLogin', {
     method: 'POST',
@@ -734,21 +754,26 @@ login.addEventListener("click", async () => {
   })
   .then((res) => res.json())
   .then((data) => {
-    console.log(data);
     if (data.status === 'ok') {
+      onLogin();
+      localStorage.setItem('authToken', data.token);
+      localStorage.setItem('userDetails', JSON.stringify(data.user));
       alert('Login Successful');
-      //   localStorage.setItem('authToken', data.token);
-      //   localStorage.setItem('userDetails', JSON.stringify(data.user));
-      //   onLogin(data);
-      
-      
-      // // Navigate to the home page after successful login
-      // navigate('/home');
+      loader_off();
     } else {
       alert('Invalid email or password');
+      loader_off();
     }
   })
   .catch((error) => {
     console.log('Error occurred during the fetch:', error);
+    loader_off();
   });
+});
+
+logout.addEventListener("click", async () => {
+  localStorage.removeItem('authToken');
+  localStorage.removeItem('userDetails');
+  blackscreen.style.visibility = "visible";
+  login_container.style.visibility = "visible";
 });

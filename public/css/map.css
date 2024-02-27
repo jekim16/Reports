@@ -191,6 +191,10 @@ input {
   margin: 20px;
 }
 
+#logout {
+  cursor: pointer;
+}
+
 #perimeter_container{
   visibility: hidden;
   width: 30%;
