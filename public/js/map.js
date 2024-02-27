@@ -105,6 +105,7 @@ var parcel = L.tileLayer.wms(
 ).addTo(map);
 
 window.onload = async () => {
+  loader_on();
   if(token == null || token == "") {
     blackscreen.style.visibility = "visible";
     login_container.style.visibility = "visible";
@@ -113,7 +114,6 @@ window.onload = async () => {
     login_container.style.visibility = "hidden";
   }
 
-  loader_on();
   await fetch("http://138.2.84.62:5000/getDistrict")
   .then((response) => response.json())
   .then((data) => {
@@ -125,7 +125,6 @@ window.onload = async () => {
       option.innerHTML = data[x].admindistrict;
       district.appendChild(option);
     }
-    
   });
   await setBarangayList();
 
@@ -479,12 +478,20 @@ async function clearFields() {
 
 async function loader_on() {
   loader.style.visibility = "visible";
+  blackscreen.style.visibility = "visible";
   createPDF.disabled = true;
   submitbtn.disabled = true;
 }
 
 async function loader_off() {
   loader.style.visibility = "hidden";
+
+  if(login_container.style.visibility == "hidden") {
+    blackscreen.style.visibility = "hidden";
+  } else {
+    blackscreen.style.visibility = "visible";
+  }
+  
   createPDF.disabled = false;
   submitbtn.disabled = false;
 }
