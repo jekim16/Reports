@@ -68,6 +68,10 @@ const table_mun_dist = document.getElementById("table_mun_dist");
 const table_section = document.getElementById("table_section");
 const table_barangay = document.getElementById("table_barangay");
 
+const login = document.getElementById("login");
+const username = document.getElementById("username");
+const password = document.getElementById("password");
+
 var wfsURL = "http://map.davaocity.gov.ph:8080/geoserver/wfs";
 var typeName = "Davao:rptas_parcelblack";
 var wfsRequestUrl = wfsURL + '?service=WFS&version=2.0.0&request=GetFeature&typeName=' + typeName + '&outputFormat=application/json&SrsName=EPSG:4326';
@@ -708,4 +712,43 @@ report.addEventListener("change", async () => {
     barangay_container.style.display = "none";
     section_container.style.display = "none";
   }
+});
+
+login.addEventListener("click", async () => {
+  const username_value = username.value;
+  const password_value = password.value;
+
+  const formData = new FormData();
+  formData.append("email", username_value);
+  formData.append("password", password_value);
+
+  fetch('https://gisuat.nexitydev.com/userLogin', {
+    method: 'POST',
+    crossDomain: true,
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: "application/json",
+      "Access-Control-Allow-Origin": "*",
+    },
+    body: JSON.stringify(formData),
+  })
+  .then((res) => res.json())
+  .then((data) => {
+    console.log(data);
+    if (data.status === 'ok') {
+      alert('Login Successful');
+      //   localStorage.setItem('authToken', data.token);
+      //   localStorage.setItem('userDetails', JSON.stringify(data.user));
+      //   onLogin(data);
+      
+      
+      // // Navigate to the home page after successful login
+      // navigate('/home');
+    } else {
+      alert('Invalid email or password');
+    }
+  })
+  .catch((error) => {
+    console.log('Error occurred during the fetch:', error);
+  });
 });

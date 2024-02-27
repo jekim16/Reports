@@ -7,6 +7,7 @@
     <link href="../css/fontawesome/css/brands.css" rel="stylesheet" />
     <link href="../css/fontawesome/css/solid.css" rel="stylesheet" />
     <link rel="stylesheet" href="../css/map.css" />
+    <link rel="stylesheet" href="../css/login.css" />
     <link rel="stylesheet" href="../dist/leaflet/leaflet.css" />
     <script src="../dist/html2canvas.min.js"></script>
     <script src="../dist/html2pdf.bundle.min.js"></script>
@@ -173,6 +174,37 @@
       <i class="fa-solid fa-xmark fa-xl" id="closePopupBtn"></i>
       <iframe id="pdfFrame" src=""></iframe>
     </div>
+    <div id="blackscreen"></div>
+    <div class="login-container">
+      <div class="form">
+        <div class="login-form">
+          <div>
+            <img src="../image/LND_Logo.png" class="login-logo" />
+          </div>
+          <div>
+            <input
+              type="text"
+              name="username"
+              id="username"
+              placeholder="Username"
+            />
+          </div>
+          <div>
+            <input
+              type="password"
+              name="password"
+              id="password"
+              placeholder="Password"
+            />
+          </div>
+          <div class="btn">
+            <button id="login">Sign In</button>
+          </div>
+          <p id="loginError"></p>
+        </div>
+      </div>
+    </div>
+
     <script src="../dist/leaflet/leaflet.js"></script>
     <script src="../dist/leaflet/leaflet-wfst.min.js"></script>
     <script src="../js/map.js"></script>
