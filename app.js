@@ -2,6 +2,7 @@ const { Pool } = require("pg");
 const fs = require("fs");
 const express = require("express");
 const multer = require("multer");
+const cors = require("cors");
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use(express.static("public"));
 app.use(express.json({ limit: "500mb" }));
 app.use(express.urlencoded({ extended: false }));
 app.use("public/image/uploads", express.static("uploads"));
+app.use(cors());
 
 
 app.get("/getDistrict", async (req, res) => {
