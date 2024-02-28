@@ -1,6 +1,7 @@
 let dist = document.getElementById("district").value;
 let brgy = document.getElementById("barangay").value;
 let sect = "";
+let logoutTimeout;
 
 const loader = document.getElementById("loader");
 const submitbtn = document.getElementById("submit");
@@ -109,6 +110,7 @@ var parcel = L.tileLayer.wms(
 ).addTo(map);
 
 window.onload = async () => {
+  resetLogoutTimer();
   loader_on();
   if(token == null || token == "") {
     user_icon.style.visibility = "hidden";
@@ -752,6 +754,7 @@ report.addEventListener("change", async () => {
 });
 
 login.addEventListener("click", async () => {
+  resetLogoutTimer();
   loader_on();
   const username_value = username.value;
   const password_value = password.value;
@@ -793,6 +796,19 @@ login.addEventListener("click", async () => {
 });
 
 logout.addEventListener("click", async () => {
+  logout_user();
+});
+
+function resetLogoutTimer() {
+  clearTimeout(logoutTimeout);
+  logoutTimeout = setTimeout(() => {
+    logout_user();
+    loginError.style.color = "red";
+    loginError.innerHTML = "You have been logged out for being idle"
+  }, 1800000);
+}
+
+function logout_user() {
   localStorage.removeItem('authToken');
   localStorage.removeItem('userDetails');
   blackscreen.style.visibility = "visible";
@@ -802,4 +818,12 @@ logout.addEventListener("click", async () => {
   loginError.innerHTML = "";
   username.value = "";
   password.value = "";
+}
+
+document.addEventListener('mousemove', resetLogoutTimer);
+document.addEventListener('keydown', resetLogoutTimer);
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    resetLogoutTimer();
+  }
 });
