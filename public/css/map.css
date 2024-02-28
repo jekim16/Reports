@@ -338,3 +338,21 @@ button:disabled {
   font-weight: bold;
   font-size: x-large;
 }
+
+#header_left {
+  display: flex;
+  align-items: center;
+}
+
+#header_right {
+  display: flex;
+  align-items: center;
+}
+
+#user_icon {
+  margin: 20px 5px 20px 20px;
+}
+
+#user_name_holder {
+  margin-right: 20px;
+}

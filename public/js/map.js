@@ -71,14 +71,18 @@ const table_barangay = document.getElementById("table_barangay");
 const login = document.getElementById("login");
 const username = document.getElementById("username");
 const password = document.getElementById("password");
+const loginError = document.getElementById("loginError");
 
 const blackscreen = document.getElementById("blackscreen");
 const login_container = document.getElementById("login_container");
 const logout = document.getElementById("logout");
 const token = localStorage.getItem("authToken");
+const user_name = localStorage.getItem("user_name");
+const user_icon = document.getElementById("user_icon");
+const user_name_holder = document.getElementById("user_name_holder");
 
 var wfsURL = "http://map.davaocity.gov.ph:8080/geoserver/wfs";
-var typeName = "Davao:rptas_parcelblack";
+var typeName = "Davao:rptas_taxmap";
 var wfsRequestUrl = wfsURL + '?service=WFS&version=2.0.0&request=GetFeature&typeName=' + typeName + '&outputFormat=application/json&SrsName=EPSG:4326';
 
 var map = L.map("map", {
@@ -92,7 +96,7 @@ L.control.scale().addTo(map);
 var parcel = L.tileLayer.wms(
   "http://map.davaocity.gov.ph:8080/geoserver/wms?",
   {
-    layers: "Davao:rptas_parcelblack",
+    layers: "Davao:rptas_taxmap",
     transparent: "true",
     tiled: true,
     format: "image/png",
@@ -107,9 +111,13 @@ var parcel = L.tileLayer.wms(
 window.onload = async () => {
   loader_on();
   if(token == null || token == "") {
+    user_icon.style.visibility = "hidden";
+    user_name_holder.innerHTML = "";
     blackscreen.style.visibility = "visible";
     login_container.style.visibility = "visible";
   } else {
+    user_icon.style.visibility = "visible";
+    user_name_holder.innerHTML = user_name;
     blackscreen.style.visibility = "hidden";
     login_container.style.visibility = "hidden";
   }
@@ -158,8 +166,7 @@ async function setBarangayList() {
     .then((data) => {
       for(var y = 0;y < data.length;y++){
         var option = document.createElement("option");
-        var brgycode = data[y].brgycode.slice(2);
-        option.value = brgycode;
+        option.value = data[y].brgycodelast3;
         option.innerHTML = data[y].brgy;
         barangay.appendChild(option);
       }
@@ -169,11 +176,11 @@ async function setBarangayList() {
 
 async function setWFS(dist, brgy, sect) {
   if(report.value == "PROPERTY IDENTIFICATION MAP"){
-    var cqlFilter = `dist = '${dist}' and brgy = '${brgy}' and sect = '${sect}'`;
+    var cqlFilter = `newdist = '${dist}' and newbrgy = '${brgy}' and newsect = '${sect}'`;
   } else if(report.value == "SECTION INDEX MAP"){
-    var cqlFilter = `dist = '${dist}' and brgy = '${brgy}'`;
+    var cqlFilter = `newdist = '${dist}' and newbrgy = '${brgy}'`;
   } else if(report.value == "BARANGAY INDEX MAP"){
-    var cqlFilter = `dist = '${dist}'`;
+    var cqlFilter = `newdist = '${dist}'`;
   }
   map.removeLayer(parcel);
 
@@ -181,7 +188,7 @@ async function setWFS(dist, brgy, sect) {
     parcel = L.tileLayer.wms(
       "http://map.davaocity.gov.ph:8080/geoserver/wms?",
       {
-        layers: "Davao:rptas_parcelblack",
+        layers: "Davao:rptas_taxmap",
         transparent: "true",
         tiled: true,
         format: "image/png",
@@ -198,7 +205,7 @@ async function setWFS(dist, brgy, sect) {
     parcel = L.tileLayer.wms(
       "http://map.davaocity.gov.ph:8080/geoserver/wms?",
       {
-        layers: "Davao:rptas_parcelblack",
+        layers: "Davao:rptas_taxmap",
         transparent: "true",
         tiled: true,
         format: "image/png",
@@ -496,9 +503,14 @@ async function loader_off() {
   submitbtn.disabled = false;
 }
 
-async function onLogin() {
+async function onLogin(data) {
+  localStorage.setItem('authToken', data.token);
+  localStorage.setItem('userDetails', JSON.stringify(data.user));
+  localStorage.setItem('user_name', data.user.name);
   blackscreen.style.visibility = "hidden";
   login_container.style.visibility = "hidden";
+  user_icon.style.visibility = "visible";
+  user_name_holder.innerHTML = data.user.name;
 }
 
 perimeter_logo.addEventListener("change", async (event) => {
@@ -584,6 +596,8 @@ submitbtn.addEventListener("click", async () => {
   table_mun_dist.innerHTML = dist;
   table_barangay.innerHTML = brgy;
   table_section.innerHTML = sect;
+
+  console.log(`${dist} ${brgy} ${sect}`);
 
   if(report.value == "PROPERTY IDENTIFICATION MAP"){
     if(dist == "" || brgy == "" || sect == "") {
@@ -762,13 +776,15 @@ login.addEventListener("click", async () => {
   .then((res) => res.json())
   .then((data) => {
     if (data.status === 'ok') {
-      onLogin();
-      localStorage.setItem('authToken', data.token);
-      localStorage.setItem('userDetails', JSON.stringify(data.user));
-      alert('Login Successful');
-      loader_off();
+      loginError.style.color = "green";
+      loginError.innerHTML = "Successfully logged in";
+      setTimeout(() => {
+        onLogin(data);
+        loader_off();
+      }, 3000);
     } else {
-      alert('Invalid email or password');
+      loginError.style.color = "red";
+      loginError.innerHTML = "Invalid email or password";
       loader_off();
     }
   })
@@ -783,4 +799,9 @@ logout.addEventListener("click", async () => {
   localStorage.removeItem('userDetails');
   blackscreen.style.visibility = "visible";
   login_container.style.visibility = "visible";
+  user_icon.style.visibility = "hidden";
+  user_name_holder.innerHTML = "";
+  loginError.innerHTML = "";
+  username.value = "";
+  password.value = "";
 });

@@ -39,7 +39,7 @@ app.get("/getDistrict", async (req, res) => {
 app.get("/getBarangay/:district", async (req, res) => {
   const district = req.params.district;
   try {
-    const result = await pool.query(`SELECT brgycode, brgy FROM brgy_code WHERE districtcode = '${district}' ORDER BY brgycode ASC`);
+    const result = await pool.query(`SELECT brgycodelast3, brgy FROM brgy_code WHERE districtcode = '${district}' ORDER BY brgycode ASC`);
 
     if(result.rows.length > 0 ) {
       res.json(result.rows);

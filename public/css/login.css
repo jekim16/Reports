@@ -17,7 +17,7 @@
     left: 0;
     right: 0;
     margin: auto;
-    z-index: 9999;
+    z-index: 9998;
 }
 
 #blackscreen {
@@ -30,7 +30,7 @@
     left: 0;
     right: 0;
     margin: auto;
-    z-index: 9999;
+    z-index: 9997;
     background-color: #1a1b27;
     opacity: .5;
 }
