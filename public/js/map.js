@@ -597,8 +597,6 @@ submitbtn.addEventListener("click", async () => {
   table_barangay.innerHTML = brgy;
   table_section.innerHTML = sect;
 
-  console.log(`${dist} ${brgy} ${sect}`);
-
   if(report.value == "PROPERTY IDENTIFICATION MAP"){
     if(dist == "" || brgy == "" || sect == "") {
       alert("Please populate all fields!");
