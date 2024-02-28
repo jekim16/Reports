@@ -172,7 +172,7 @@ input {
 }
 
 .leaflet-control-scale {
-  font-size: large;
+  font-size: 13px;
 }
 
 #header {
