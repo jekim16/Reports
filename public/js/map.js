@@ -190,12 +190,19 @@ async function setBarangayList() {
 }
 
 async function setWFS(dist, brgy, sect) {
+  var layer = "Davao:rptas_taxmap";
   if(report.value == "PROPERTY IDENTIFICATION MAP"){
     var cqlFilter = `newdist = '${dist}' and newbrgy = '${brgy}' and newsect = '${sect}'`;
+    layer = "Davao:rptas_taxmap";
+    typeName = "Davao:rptas_taxmap";
   } else if(report.value == "SECTION INDEX MAP"){
     var cqlFilter = `newdist = '${dist}' and newbrgy = '${brgy}'`;
+    layer = "Davao:rptas_sectionmap";
+    typeName = "Davao:rptas_sectionmap";
   } else if(report.value == "BARANGAY INDEX MAP"){
     var cqlFilter = `newdist = '${dist}'`;
+    layer = "Davao:rptas_taxmap";
+    typeName = "Davao:rptas_taxmap";
   }
   map.removeLayer(parcel);
 
@@ -203,7 +210,7 @@ async function setWFS(dist, brgy, sect) {
     parcel = L.tileLayer.wms(
       "http://map.davaocity.gov.ph:8080/geoserver/wms?",
       {
-        layers: "Davao:rptas_taxmap",
+        layers: layer,
         transparent: "true",
         tiled: true,
         format: "image/png",
@@ -220,7 +227,7 @@ async function setWFS(dist, brgy, sect) {
     parcel = L.tileLayer.wms(
       "http://map.davaocity.gov.ph:8080/geoserver/wms?",
       {
-        layers: "Davao:rptas_taxmap",
+        layers: layer,
         transparent: "true",
         tiled: true,
         format: "image/png",
