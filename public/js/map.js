@@ -110,20 +110,50 @@ var parcel = L.tileLayer.wms(
 ).addTo(map);
 
 window.onload = async () => {
-  resetLogoutTimer();
   loader_on();
-  if(token == null || token == "") {
+  
+  if(token) {
+    resetLogoutTimer();
+  }
+
+  await isCurrentDateDifferent();
+  await checkToken();
+  await setDistrictList();
+  await setBarangayList();
+  await getBoundingBox(wfsRequestUrl);
+  parcel.addTo(map);
+  await setTemplateTitle();
+  await getPerims(() => {
+    loader_off();
+  });
+}
+
+async function checkToken() {
+  if(token) {
+    user_icon.style.visibility = "visible";
+    user_name_holder.innerHTML = user_name;
+    blackscreen.style.visibility = "hidden";
+    login_container.style.visibility = "hidden";    
+  } else {
     user_icon.style.visibility = "hidden";
     user_name_holder.innerHTML = "";
     blackscreen.style.visibility = "visible";
     login_container.style.visibility = "visible";
-  } else {
-    user_icon.style.visibility = "visible";
-    user_name_holder.innerHTML = user_name;
-    blackscreen.style.visibility = "hidden";
-    login_container.style.visibility = "hidden";
   }
+}
 
+async function getBoundingBox(wfsRequestUrl) {
+  fetch(wfsRequestUrl)
+  .then(response => response.json())
+  .then(data => {
+      var boundingBox = calculateBoundingBox(data);
+      map.fitBounds(boundingBox);
+      loader_off();
+  })
+  .catch(error => console.error('Error:', error));
+}
+
+async function setDistrictList() {
   await fetch("http://138.2.84.62:5000/getDistrict")
   .then((response) => response.json())
   .then((data) => {
@@ -135,23 +165,6 @@ window.onload = async () => {
       option.innerHTML = data[x].admindistrict;
       district.appendChild(option);
     }
-  });
-  await setBarangayList();
-
-  parcel.addTo(map);
-
-  fetch(wfsRequestUrl)
-  .then(response => response.json())
-  .then(data => {
-      var boundingBox = calculateBoundingBox(data);
-      map.fitBounds(boundingBox);
-      loader_off();
-  })
-  .catch(error => console.error('Error:', error));
-
-  setTemplateTitle();
-  await getPerims(() => {
-    loader_off();
   });
 }
 
@@ -506,6 +519,7 @@ async function loader_off() {
 }
 
 async function onLogin(data) {
+  localStorage.setItem('dateTime', getCurrentDate());
   localStorage.setItem('authToken', data.token);
   localStorage.setItem('userDetails', JSON.stringify(data.user));
   localStorage.setItem('user_name', data.user.name);
@@ -513,6 +527,89 @@ async function onLogin(data) {
   login_container.style.visibility = "hidden";
   user_icon.style.visibility = "visible";
   user_name_holder.innerHTML = data.user.name;
+}
+
+function getCurrentDate() {
+  const currentDate = new Date();
+  const year = currentDate.getFullYear();
+  const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+  const day = currentDate.getDate().toString().padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function resetLogoutTimer() {
+  clearTimeout(logoutTimeout);
+  logoutTimeout = setTimeout(() => {
+    logout_user();
+    loginError.style.color = "red";
+    loginError.innerHTML = "You have been logged out for being idle"
+  }, 1800000);
+}
+
+async function logout_user() {
+  localStorage.removeItem('dateTime');
+  localStorage.removeItem('authToken');
+  localStorage.removeItem('userDetails');
+  blackscreen.style.visibility = "visible";
+  login_container.style.visibility = "visible";
+  user_icon.style.visibility = "hidden";
+  user_name_holder.innerHTML = "";
+  loginError.innerHTML = "";
+  username.value = "";
+  password.value = "";
+}
+
+async function isCurrentDateDifferent() {
+  const currentDate = getCurrentDate();
+  const previousDate = localStorage.getItem('dateTime');
+
+  if(previousDate) {
+    if(previousDate !== currentDate) {
+      await logout_user();
+    }
+  }
+}
+
+async function login_user() {
+  resetLogoutTimer();
+  loader_on();
+  const username_value = username.value;
+  const password_value = password.value;
+
+  const formData = {
+    email: username_value,
+    password: password_value
+  }
+
+  fetch('https://gisuat.nexitydev.com/userLogin', {
+    method: 'POST',
+    crossDomain: true,
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: "application/json",
+      "Access-Control-Allow-Origin": "*",
+    },
+    body: JSON.stringify(formData),
+  })
+  .then((res) => res.json())
+  .then((data) => {
+    if (data.status === 'ok') {
+      loginError.style.color = "green";
+      loginError.innerHTML = "Successfully logged in";
+      setTimeout(() => {
+        onLogin(data);
+        loader_off();
+      }, 3000);
+    } else {
+      loginError.style.color = "red";
+      loginError.innerHTML = "Invalid email or password";
+      loader_off();
+    }
+  })
+  .catch((error) => {
+    console.log('Error occurred during the fetch:', error);
+    loader_off();
+  });
 }
 
 perimeter_logo.addEventListener("change", async (event) => {
@@ -753,77 +850,32 @@ report.addEventListener("change", async () => {
   }
 });
 
-login.addEventListener("click", async () => {
-  resetLogoutTimer();
-  loader_on();
-  const username_value = username.value;
-  const password_value = password.value;
-
-  const formData = {
-    email: username_value,
-    password: password_value
+password.addEventListener("keypress", async (event) => {
+  if (event.key === 'Enter') {
+    await login_user();
   }
+});
 
-  fetch('https://gisuat.nexitydev.com/userLogin', {
-    method: 'POST',
-    crossDomain: true,
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: "application/json",
-      "Access-Control-Allow-Origin": "*",
-    },
-    body: JSON.stringify(formData),
-  })
-  .then((res) => res.json())
-  .then((data) => {
-    if (data.status === 'ok') {
-      loginError.style.color = "green";
-      loginError.innerHTML = "Successfully logged in";
-      setTimeout(() => {
-        onLogin(data);
-        loader_off();
-      }, 3000);
-    } else {
-      loginError.style.color = "red";
-      loginError.innerHTML = "Invalid email or password";
-      loader_off();
-    }
-  })
-  .catch((error) => {
-    console.log('Error occurred during the fetch:', error);
-    loader_off();
-  });
+login.addEventListener("click", async () => {
+  await login_user();
 });
 
 logout.addEventListener("click", async () => {
   logout_user();
 });
 
-function resetLogoutTimer() {
-  clearTimeout(logoutTimeout);
-  logoutTimeout = setTimeout(() => {
-    logout_user();
-    loginError.style.color = "red";
-    loginError.innerHTML = "You have been logged out for being idle"
-  }, 1800000);
-}
-
-function logout_user() {
-  localStorage.removeItem('authToken');
-  localStorage.removeItem('userDetails');
-  blackscreen.style.visibility = "visible";
-  login_container.style.visibility = "visible";
-  user_icon.style.visibility = "hidden";
-  user_name_holder.innerHTML = "";
-  loginError.innerHTML = "";
-  username.value = "";
-  password.value = "";
-}
-
-document.addEventListener('mousemove', resetLogoutTimer);
-document.addEventListener('keydown', resetLogoutTimer);
+document.addEventListener('mousemove', () => {
+  if(token) {
+    resetLogoutTimer();
+  }
+});
+document.addEventListener('keydown', () => {
+  if(token) {
+    resetLogoutTimer();
+  }
+});
 document.addEventListener('visibilitychange', () => {
-  if (document.hidden) {
+  if (document.hidden && token) {
     resetLogoutTimer();
   }
 });
