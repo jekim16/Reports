@@ -112,6 +112,16 @@ var parcel = L.tileLayer.wms(
 window.onload = async () => {
   loader_on();
   
+  if( window.localStorage ) {
+    if( !localStorage.getItem('firstLoad') ) {
+      localStorage['firstLoad'] = true;
+      window.location.reload();
+    }  
+    else {
+      localStorage.removeItem('firstLoad');
+    }
+  }
+  
   if(token) {
     resetLogoutTimer();
   }
