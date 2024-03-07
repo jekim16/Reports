@@ -528,13 +528,7 @@ async function loader_off() {
   loader.style.visibility = "hidden";
   transparentscreen.style.visibility = "hidden";
 
-  if(login_container.style.visibility == "hidden") {
-    blackscreen.style.visibility = "hidden";
-  } else {
-    blackscreen.style.visibility = "visible";
-  }
-
-  if(pdfFrameContainer.style.display === "block") {
+  if(login_container.style.visibility == "visible" || pdfFrameContainer.style.display === "block") {
     blackscreen.style.visibility = "visible";
   } else {
     blackscreen.style.visibility = "hidden";
