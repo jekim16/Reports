@@ -4,6 +4,7 @@ let sect = "";
 let logoutTimeout;
 
 const loader = document.getElementById("loader");
+const transparentscreen = document.getElementById("transparentscreen");
 const submitbtn = document.getElementById("submit");
 const closePopupBtn = document.getElementById("closePopupBtn");
 const pdfFrameContainer = document.getElementById("pdfFrameContainer");
@@ -323,7 +324,7 @@ async function captureLeaflet() {
         .catch((error) => {
           console.error("Error generating PDF:", error);
         });
-        
+
         loader_off();
     });
   });
@@ -517,6 +518,7 @@ async function clearFields() {
 
 async function loader_on() {
   loader.style.visibility = "visible";
+  transparentscreen.style.visibility = "visible";
   blackscreen.style.visibility = "visible";
   createPDF.disabled = true;
   submitbtn.disabled = true;
@@ -524,11 +526,18 @@ async function loader_on() {
 
 async function loader_off() {
   loader.style.visibility = "hidden";
+  transparentscreen.style.visibility = "hidden";
 
   if(login_container.style.visibility == "hidden") {
     blackscreen.style.visibility = "hidden";
   } else {
     blackscreen.style.visibility = "visible";
+  }
+
+  if(pdfFrameContainer.style.display === "block") {
+    blackscreen.style.visibility = "visible";
+  } else {
+    blackscreen.style.visibility = "hidden";
   }
   
   createPDF.disabled = false;
@@ -741,13 +750,14 @@ submitbtn.addEventListener("click", async () => {
 
 createPDF.addEventListener("click", async () => {
   createPDF.disabled = true;
-  perimeter_container.style.visibility = "hidden";
   loader_on();
   await captureLeaflet();
+  perimeter_container.style.visibility = "hidden";
 });
 
 closePopupBtn.addEventListener("click", () => {
   pdfFrameContainer.style.display = "none";
+  blackscreen.style.visibility = "hidden";
   createPDF.disabled = false;
 });
 
